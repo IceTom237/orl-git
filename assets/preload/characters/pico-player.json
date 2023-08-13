@@ -1,0 +1,155 @@
+{
+	"animations": [
+		{
+			"loop": false,
+			"offsets": [
+				-5,
+				0
+			],
+			"anim": "idle",
+			"fps": 24,
+			"name": "idle",
+			"indices": []
+		},
+		{
+			"loop": false,
+			"offsets": [
+				91,
+				-16
+			],
+			"anim": "singLEFT",
+			"fps": 24,
+			"name": "left",
+			"indices": []
+		},
+		{
+			"loop": false,
+			"offsets": [
+				70,
+				-99
+			],
+			"anim": "singDOWN",
+			"fps": 24,
+			"name": "down",
+			"indices": []
+		},
+		{
+			"loop": false,
+			"offsets": [
+				-13,
+				17
+			],
+			"anim": "singUP",
+			"fps": 24,
+			"name": "up",
+			"indices": []
+		},
+		{
+			"loop": false,
+			"offsets": [
+				-79,
+				-4
+			],
+			"anim": "singRIGHT",
+			"fps": 24,
+			"name": "right",
+			"indices": []
+		},
+		{
+			"loop": false,
+			"offsets": [
+				65,
+				-109
+			],
+			"anim": "singDOWNmiss",
+			"fps": 24,
+			"name": "mon",
+			"indices": []
+		},
+		{
+			"loop": false,
+			"offsets": [
+				-16,
+				27
+			],
+			"anim": "singUPmiss",
+			"fps": 24,
+			"name": "mub",
+			"indices": []
+		},
+		{
+			"loop": false,
+			"offsets": [
+				-84,
+				-8
+			],
+			"anim": "singRIGHTmiss",
+			"fps": 24,
+			"name": "mit",
+			"indices": []
+		},
+		{
+			"loop": false,
+			"offsets": [
+				107,
+				-21
+			],
+			"anim": "singLEFTmiss",
+			"fps": 24,
+			"name": "met",
+			"indices": []
+		},
+		{
+			"offsets": [
+				560,
+				290
+			],
+			"indices": [],
+			"fps": 24,
+			"anim": "firstDeath",
+			"loop": false,
+			"name": "ded"
+		},
+		{
+			"offsets": [
+				77,
+				-223
+			],
+			"indices": [],
+			"fps": 24,
+			"anim": "deathLoop",
+			"loop": true,
+			"name": "dead loop"
+		},
+		{
+			"offsets": [
+				80,
+				-230
+			],
+			"indices": [],
+			"fps": 24,
+			"anim": "deathConfirm",
+			"loop": false,
+			"name": "death confirm"
+		}
+	],
+	"no_antialiasing": false,
+	"image": "characters/pico_new",
+	"position": [
+		0,
+		310
+	],
+	"healthicon": "pico",
+	"flip_x": true,
+	"healthbar_colors": [
+		160,
+		235,
+		100
+	],
+	"camera_position": [
+		170,
+		100
+	],
+	"sing_duration": 4,
+	"scale": 1
+}
