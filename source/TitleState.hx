@@ -59,8 +59,6 @@ class TitleState extends MusicBeatState
 
 	var canPressEnter:Bool = false;
 
-	var staticShader:Static.StaticEffect;
-
 	override public function create():Void
 	{
 		Lib.application.window.title = "One Ring Left";
@@ -93,7 +91,6 @@ class TitleState extends MusicBeatState
 		// DEBUG BULLSHIT
 
 		swagShader = new ColorSwap();
-		staticShader = new Static.StaticEffect();
 		super.create();
 
 		FlxG.save.bind('funkin', 'ninjamuffin99');
@@ -171,8 +168,7 @@ class TitleState extends MusicBeatState
 		// bg.antialiasing = ClientPrefs.globalAntialiasing;
 		// bg.setGraphicSize(Std.int(bg.width * 0.6));
 		// bg.updateHitbox();
-		bg.shader = staticShader;
-		add(bg);
+		// add(bg);
 
 		logoBl = new FlxSprite(-150, -100);
 		logoBl.frames = Paths.getSparrowAtlas('logoBumpin');
@@ -280,8 +276,6 @@ class TitleState extends MusicBeatState
 		{
 			FlxG.fullscreen = !FlxG.fullscreen;
 		}
-
-		staticShader.time += elapsed;
 
 		var pressedEnter:Bool = FlxG.keys.justPressed.ENTER;
 
