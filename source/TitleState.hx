@@ -26,7 +26,6 @@ import flixel.tweens.FlxTween;
 import flixel.util.FlxColor;
 import flixel.util.FlxTimer;
 import lime.app.Application;
-import openfl.Lib;
 import openfl.Assets;
 
 #if sys
@@ -44,6 +43,7 @@ class TitleState extends MusicBeatState
 	static var initialized:Bool = false;
 
 	var blackScreen:FlxSprite;
+	var backgroundTitle:FlxSprite;
 	var credGroup:FlxGroup;
 	var credTextShit:Alphabet;
 	var textGroup:FlxGroup;
@@ -54,15 +54,13 @@ class TitleState extends MusicBeatState
 	var wackyImage:FlxSprite;
 
 	var easterEggEnabled:Bool = true; //Disable this to hide the easter egg
-	var easterEggKeyCombination:Array<FlxKey> = [FlxKey.UP, FlxKey.DOWN, FlxKey.LEFT, FlxKey.RIGHT];
+	var easterEggKeyCombination:Array<FlxKey> = [FlxKey.B, FlxKey.B]; //bb stands for bbpanzu cuz he wanted this lmao
 	var lastKeysPressed:Array<FlxKey> = [];
 
 	var canPressEnter:Bool = false;
 
 	override public function create():Void
 	{
-		Lib.application.window.title = "One Ring Left";
-
 		#if (polymod && !html5)
 		if (sys.FileSystem.exists('mods/')) {
 			var folders:Array<String> = [];
@@ -90,7 +88,6 @@ class TitleState extends MusicBeatState
 
 		// DEBUG BULLSHIT
 
-		swagShader = new ColorSwap();
 		super.create();
 
 		FlxG.save.bind('funkin', 'ninjamuffin99');
@@ -98,9 +95,14 @@ class TitleState extends MusicBeatState
 
 		Highscore.load();
 
+		if (FlxG.save.data.weekCompleted != null)
+		{
+			StoryMenuState.weekCompleted = FlxG.save.data.weekCompleted;
+		}
+
 		FlxG.mouse.visible = false;
 		#if FREEPLAY
-		MusicBeatState.switchState(new freeplay.FreeplayPage1State());
+		MusicBeatState.switchState(new FreeplayState());
 		#elseif CHARTING
 		MusicBeatState.switchState(new ChartingState());
 		#else
@@ -117,7 +119,14 @@ class TitleState extends MusicBeatState
 			#end
 			new FlxTimer().start(1, function(tmr:FlxTimer)
 			{
-				startVideo('intro');
+				if (initialized)
+				{
+					startIntro();
+				}
+				else
+				{
+					startVideo('intro');
+				}
 			});
 		}
 		#end
@@ -127,7 +136,6 @@ class TitleState extends MusicBeatState
 	var gfDance:FlxSprite;
 	var danceLeft:Bool = false;
 	var titleText:FlxSprite;
-	var swagShader:ColorSwap = null;
 
 	function startIntro()
 	{
@@ -168,7 +176,7 @@ class TitleState extends MusicBeatState
 		// bg.antialiasing = ClientPrefs.globalAntialiasing;
 		// bg.setGraphicSize(Std.int(bg.width * 0.6));
 		// bg.updateHitbox();
-		// add(bg);
+		add(bg);
 
 		logoBl = new FlxSprite(-150, -100);
 		logoBl.frames = Paths.getSparrowAtlas('logoBumpin');
@@ -178,8 +186,11 @@ class TitleState extends MusicBeatState
 		logoBl.updateHitbox();
 		// logoBl.screenCenter();
 		// logoBl.color = FlxColor.BLACK;
+		
+		backgroundTitle = new FlxSprite().loadGraphic(Paths.image('titleBG'));
+  		backgroundTitle.screenCenter();
+  		backgroundTitle.antialiasing = ClientPrefs.globalAntialiasing;
 
-		swagShader = new ColorSwap();
 		if(!FlxG.save.data.psykaEasterEgg || !easterEggEnabled) {
 			gfDance = new FlxSprite(FlxG.width * 0.4, FlxG.height * 0.07);
 			gfDance.frames = Paths.getSparrowAtlas('gfDanceTitle');
@@ -194,10 +205,9 @@ class TitleState extends MusicBeatState
 			gfDance.animation.addByIndices('danceRight', 'psykaDance', [15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29], "", 24, false);
 		}
 		gfDance.antialiasing = ClientPrefs.globalAntialiasing;
-		//add(gfDance);
-		gfDance.shader = swagShader.shader;
-		//add(logoBl);
-		//logoBl.shader = swagShader.shader;
+		add(gfDance);
+		add(backgroundTitle);
+		// add(logoBl);
 
 		titleText = new FlxSprite(100, FlxG.height * 0.8);
 		titleText.frames = Paths.getSparrowAtlas('titleEnter');
@@ -306,23 +316,17 @@ class TitleState extends MusicBeatState
 
 		if (!transitioning && skippedIntro)
 		{
-			if(pressedEnter && canPressEnter)
+			if(pressedEnter)
 			{
 				if(titleText != null) titleText.animation.play('press');
 
-				FlxG.camera.flash(FlxColor.RED, 1);
+				FlxG.camera.flash(FlxColor.WHITE, 1);
 				FlxG.sound.play(Paths.sound('confirmMenu'), 0.7);
 
 				transitioning = true;
 				// FlxG.sound.music.stop();
 
 				new FlxTimer().start(1, function(tmr:FlxTimer)
-				if(ClientPrefs.showWarning)
-				{
-					MusicBeatState.switchState(new WarningSubState());
-					closedState = true;
-				}
-				else
 				{
 					MusicBeatState.switchState(new MainMenuState());
 					closedState = true;
@@ -349,7 +353,7 @@ class TitleState extends MusicBeatState
 							}
 						}
 
-						/*if(!isDifferent) {
+						if(!isDifferent) {
 							trace('Easter egg triggered!');
 							FlxG.save.data.psykaEasterEgg = !FlxG.save.data.psykaEasterEgg;
 							FlxG.sound.play(Paths.sound('secretSound'));
@@ -368,21 +372,15 @@ class TitleState extends MusicBeatState
 							lastKeysPressed = [];
 							closedState = true;
 							transitioning = true;
-						}*/
+						}
 					}
 				}
 			}
 		}
 
-		if (pressedEnter && !skippedIntro && canPressEnter)
+		if (pressedEnter && !skippedIntro)
 		{
 			skipIntro();
-		}
-
-		if(swagShader != null)
-		{
-			if(controls.UI_LEFT) swagShader.hue -= elapsed * 0.1;
-			if(controls.UI_RIGHT) swagShader.hue += elapsed * 0.1;
 		}
 
 		super.update(elapsed);
@@ -442,9 +440,9 @@ class TitleState extends MusicBeatState
 			{
 				case 1:
 					createCoolText(['Team Funkdash'], 45);
-				case 2:
-					addMoreText('Presents', 45);
 				case 3:
+					addMoreText('Presents', 45);
+				case 4:
 					skipIntro();
 			}
 		}
@@ -466,49 +464,48 @@ class TitleState extends MusicBeatState
 
 	public function startVideo(name:String):Void
 	{
-	#if VIDEOS_ALLOWED
-	var foundFile:Bool = false;
-	var fileName:String = #if MODS_ALLOWED Paths.modFolders('videos/' + name + '.' + Paths.VIDEO_EXT); #else ''; #end
-	#if sys
-	if (FileSystem.exists(fileName))
-	{
-		foundFile = true;
-	}
-	#end
-
-	if (!foundFile)
-	{
-		fileName = Paths.video(name);
+		#if VIDEOS_ALLOWED
+		var foundFile:Bool = false;
+		var fileName:String = #if MODS_ALLOWED Paths.modFolders('videos/' + name + '.' + Paths.VIDEO_EXT); #else ''; #end
 		#if sys
 		if (FileSystem.exists(fileName))
 		{
-		#else
-		if (OpenFlAssets.exists(fileName))
-		{
-		#end
 			foundFile = true;
 		}
-		} if (foundFile)
-		{
-			var bg = new FlxSprite(-FlxG.width, -FlxG.height).makeGraphic(FlxG.width * 3, FlxG.height * 3, FlxColor.BLACK);
-			bg.scrollFactor.set();
-			add(bg);
-
-			FlxG.autoPause = false;
-			(new FlxVideo(fileName)).finishCallback = function()
-			{
-				canPressEnter = true;
-				startIntro();
-				
-				FlxG.autoPause = true;
-			}
-			return;
-		}
-		else
-		{
-			FlxG.log.warn('Couldnt find video file: ' + fileName);
-		}
 		#end
+	
+		if (!foundFile)
+		{
+			fileName = Paths.video(name);
+			#if sys
+			if (FileSystem.exists(fileName))
+			{
+			#else
+			if (OpenFlAssets.exists(fileName))
+			{
+			#end
+				foundFile = true;
+			}
+			} if (foundFile)
+			{
+				var bg = new FlxSprite(-FlxG.width, -FlxG.height).makeGraphic(FlxG.width * 3, FlxG.height * 3, FlxColor.BLACK);
+				bg.scrollFactor.set();
+				add(bg);
+	
+				FlxG.autoPause = false;
+				(new FlxVideo(fileName)).finishCallback = function()
+				{
+					canPressEnter = true;
+					startIntro();
+					
+					FlxG.autoPause = true;
+				}
+				return;
+			}
+			else
+			{
+				FlxG.log.warn('Couldnt find video file: ' + fileName);
+			}
+			#end
 	}
-
 }
