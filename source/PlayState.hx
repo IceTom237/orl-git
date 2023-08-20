@@ -2128,22 +2128,6 @@ class PlayState extends MusicBeatState
 		if (health > 2)
 			health = 2;
 
-		if (health == 2){
-			iconP1.alpha = 0.5;
-			iconP2.alpha = 0.5;
-			scoreTxt.visible = false;
-			healthBar.createFilledBar(0xFFFF0000, 0xFF66FF33);
-			healthBar.updateBar();
-		}
-		else{
-			iconP1.alpha = 1;
-			iconP2.alpha = 1;
-			scoreTxt.visible = true;
-			healthBar.createFilledBar(FlxColor.fromRGB(dad.healthColorArray[0], dad.healthColorArray[1], dad.healthColorArray[2]),
-			FlxColor.fromRGB(boyfriend.healthColorArray[0], boyfriend.healthColorArray[1], boyfriend.healthColorArray[2]));
-			healthBar.updateBar();
-		}
-
 		if(curSong == 'kill streak'){
 			health = 1;
 		}
@@ -3574,11 +3558,13 @@ class PlayState extends MusicBeatState
 			}
 		});
 
-		health -= daNote.missHealth; //For testing purposes
-		trace(daNote.missHealth);
-		songMisses++;
+		if(!daNote.isSustainNote){
+			health -= daNote.missHealth; //For testing purposes
+			trace(daNote.missHealth);
+			songMisses++;
+			RecalculateRating();
+		}
 		vocals.volume = 0;
-		RecalculateRating();
 
 		var animToPlay:String = '';
 		switch (Math.abs(daNote.noteData) % 4)
@@ -3681,11 +3667,11 @@ class PlayState extends MusicBeatState
 
 			if (!note.isSustainNote)
 			{
+				health += note.hitHealth;
 				popUpScore(note);
 				combo += 1;
 				if(combo > 9999) combo = 9999;
 			}
-			health += note.hitHealth;
 
 			if(!note.noAnimation) {
 				var daAlt = '';
