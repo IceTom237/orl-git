@@ -44,6 +44,7 @@ class TitleState extends MusicBeatState
 	static var initialized:Bool = false;
 
 	var blackScreen:FlxSprite;
+	var backgroundTitle:FlxSprite;
 	var credGroup:FlxGroup;
 	var credTextShit:Alphabet;
 	var textGroup:FlxGroup;
@@ -58,8 +59,6 @@ class TitleState extends MusicBeatState
 	var lastKeysPressed:Array<FlxKey> = [];
 
 	var canPressEnter:Bool = false;
-
-	var staticShader:Static.StaticEffect;
 
 	override public function create():Void
 	{
@@ -92,8 +91,11 @@ class TitleState extends MusicBeatState
 
 		// DEBUG BULLSHIT
 
+		backgroundTitle = new FlxSprite().loadGraphic(Paths.image('titleBG'));
+		backgroundTitle.screenCenter();
+		backgroundTitle.antialiasing = ClientPrefs.globalAntialiasing;
+
 		swagShader = new ColorSwap();
-		staticShader = new Static.StaticEffect();
 		super.create();
 
 		FlxG.save.bind('funkin', 'ninjamuffin99');
@@ -171,7 +173,6 @@ class TitleState extends MusicBeatState
 		// bg.antialiasing = ClientPrefs.globalAntialiasing;
 		// bg.setGraphicSize(Std.int(bg.width * 0.6));
 		// bg.updateHitbox();
-		bg.shader = staticShader;
 		add(bg);
 
 		logoBl = new FlxSprite(-150, -100);
@@ -199,6 +200,7 @@ class TitleState extends MusicBeatState
 		}
 		gfDance.antialiasing = ClientPrefs.globalAntialiasing;
 		//add(gfDance);
+		add(backgroundTitle);
 		gfDance.shader = swagShader.shader;
 		//add(logoBl);
 		//logoBl.shader = swagShader.shader;
@@ -280,8 +282,6 @@ class TitleState extends MusicBeatState
 		{
 			FlxG.fullscreen = !FlxG.fullscreen;
 		}
-
-		staticShader.time += elapsed;
 
 		var pressedEnter:Bool = FlxG.keys.justPressed.ENTER;
 
