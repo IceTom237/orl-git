@@ -33,7 +33,7 @@ class MainMenuState extends MusicBeatState
 	private var camGame:FlxCamera;
 	private var camAchievement:FlxCamera;
 	
-	var optionShit:Array<String> = ['story_mode', 'freeplay', 'options', 'extras', 'credits'];
+	var optionShit:Array<String> = ['story_mode', 'freeplay', 'extras', 'options'];
 
 	var magenta:FlxSprite;
 	var camFollow:FlxObject;
@@ -223,10 +223,10 @@ class MainMenuState extends MusicBeatState
 										MusicBeatState.switchState(new StoryMode());
 									case 'freeplay':
 										MusicBeatState.switchState(new FreeplayState());
+									case 'extras':
+										MusicBeatState.switchState(new ExtrasState());
 									case 'options':
 										MusicBeatState.switchState(new OptionsState());
-									case 'credits':
-										MusicBeatState.switchState(new CreditsState());
 								}
 							});
 						}

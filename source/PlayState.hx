@@ -114,6 +114,7 @@ class PlayState extends MusicBeatState
 	public static var isPixelStage:Bool = false;
 	public static var SONG:SwagSong = null;
 	public static var isStoryMode:Bool = false;
+	public static var isExtrasMenu:Bool = false;
 	public static var storyWeek:Int = 0;
 	public static var storyPlaylist:Array<String> = [];
 	public static var storyDifficulty:Int = 1;
@@ -296,6 +297,10 @@ class PlayState extends MusicBeatState
 		if (isStoryMode)
 		{
 			detailsText = "Story Mode: " + WeekData.getCurrentWeek().weekName;
+		}
+		else if (isExtrasMenu)
+		{
+			detailsText = "Extras";
 		}
 		else
 		{
@@ -3184,6 +3189,20 @@ class PlayState extends MusicBeatState
 					}
 				}
 			}
+			else if (isExtrasMenu)
+			{
+				trace('extra sex');
+				cancelFadeTween();
+				CustomFadeTransition.nextCamera = camOther;
+				if(FlxTransitionableState.skipNextTransIn) {
+					CustomFadeTransition.nextCamera = null;
+				}
+				MusicBeatState.switchState(new ExtrasState());
+				FlxG.sound.playMusic(Paths.music('freakyMenu'));
+				usedPractice = false;
+				changedDifficulty = false;
+				cpuControlled = false;
+			}
 			else
 			{
 				trace('WENT BACK TO FREEPLAY??');
@@ -3562,6 +3581,7 @@ class PlayState extends MusicBeatState
 			health -= daNote.missHealth; //For testing purposes
 			trace(daNote.missHealth);
 			songMisses++;
+			if(!practiceMode) songScore -= 10;
 			RecalculateRating();
 		}
 		vocals.volume = 0;
@@ -3601,7 +3621,6 @@ class PlayState extends MusicBeatState
 			}
 			combo = 0;
 
-			if(!practiceMode) songScore -= 10;
 			if(!endingSong) {
 				if(ghostMiss) ghostMisses++;
 				songMisses++;

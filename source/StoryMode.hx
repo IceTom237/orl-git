@@ -17,12 +17,8 @@ using StringTools;
 
 class StoryMode extends MusicBeatState
 {
-	var songs:Array<String> = ['foraging', 'torn apart', 'blood thirsty'];
+	var songs:Array<String> = ['inflamed'];
 	private var grpTexts:FlxTypedGroup<Alphabet>;
-
-    var imagePaths:Array<String>;
-    var currentIndex:Int = 0;
-    var imageSprite:FlxSprite;
 
 	private var curSelected = 0;
 
@@ -38,11 +34,9 @@ class StoryMode extends MusicBeatState
 		bg.scrollFactor.set();
 		add(bg);
 
-        imagePaths = ["storymenu/momitor/foraging", "storymenu/momitor/torn-apart", "storymenu/momitor/blood-thirsty"];
-
-        imageSprite = new FlxSprite(0, 0).loadGraphic(Paths.image("storymenu/momitor/foraging"));
-        imageSprite.screenCenter();
-        add(imageSprite);
+        var momitor:FlxSprite = new FlxSprite(0, 0).loadGraphic(Paths.image("storymenu/momitor/inflamed"));
+        momitor.screenCenter();
+        add(momitor);
 
 		grpTexts = new FlxTypedGroup<Alphabet>();
 		add(grpTexts);
@@ -62,33 +56,6 @@ class StoryMode extends MusicBeatState
 
 	override function update(elapsed:Float)
 	{
-		if (controls.UI_LEFT_P)
-		{
-			changeSelection(-1);
-
-			currentIndex--;
-            if (currentIndex < 0)
-            {
-                currentIndex = imagePaths.length - 1;
-            }
-            remove(imageSprite);
-            imageSprite = new FlxSprite(0, 0).loadGraphic(Paths.image(imagePaths[currentIndex]));
-            add(imageSprite);
-		}
-		if (controls.UI_RIGHT_P)
-		{
-			changeSelection(1);
-
-			currentIndex++;
-            if (currentIndex >= imagePaths.length)
-            {
-                currentIndex = 0;
-            }
-            remove(imageSprite);
-            imageSprite = new FlxSprite(0, 0).loadGraphic(Paths.image(imagePaths[currentIndex]));
-            add(imageSprite);
-		}
-
 		if (controls.BACK)
 		{
 			MusicBeatState.switchState(new MainMenuState());
@@ -97,12 +64,8 @@ class StoryMode extends MusicBeatState
 		if (controls.ACCEPT)
 		{
 			switch(songs[curSelected]) {
-				case 'foraging':
-					PlayState.SONG = Song.loadFromJson('foraging', 'foraging');
-					LoadingState.loadAndSwitchState(new PlayState());
-				case 'torn apart':
-					PlayState.SONG = Song.loadFromJson('torn-apart', 'torn-apart');
-					LoadingState.loadAndSwitchState(new PlayState());
+				case 'inflamed':
+					//insert code here memehoover
 			}
 			FlxG.sound.music.volume = 0;
 		}
@@ -122,6 +85,9 @@ class StoryMode extends MusicBeatState
 				// item.setGraphicSize(Std.int(item.width));
 			}
 		}
+
+		PlayState.isStoryMode = true;
+
 		super.update(elapsed);
 	}
 

@@ -316,7 +316,7 @@ class TitleState extends MusicBeatState
 
 		if (!transitioning && skippedIntro)
 		{
-			if(pressedEnter)
+			if(pressedEnter && canPressEnter)
 			{
 				if(titleText != null) titleText.animation.play('press');
 
@@ -378,7 +378,7 @@ class TitleState extends MusicBeatState
 			}
 		}
 
-		if (pressedEnter && !skippedIntro)
+		if (pressedEnter && !skippedIntro && canPressEnter)
 		{
 			skipIntro();
 		}
