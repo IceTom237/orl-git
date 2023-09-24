@@ -1122,6 +1122,27 @@ class PlayState extends MusicBeatState
 			Lib.application.window.title = "One Ring Left";
 
 			timeBar.createFilledBar(0xFF000000, 0xFFFF6600);
+
+			GameOverSubstate.deathSoundName = 'fnf_loss_sfx';
+			GameOverSubstate.loopSoundName = 'gameOver';
+			GameOverSubstate.endSoundName = 'gameOverEnd';
+			GameOverSubstate.characterName = 'bf-turned';
+		}
+
+		if(curSong == 'slices'){
+			Lib.application.window.title = "One Ring Left";
+
+			timeBar.visible = false;
+			timeBarBG.visible = false;
+			timeTxt.visible = false;
+
+			scoreTxt = new FlxText(healthBarBG.x + healthBarBG.width - 190, healthBarBG.y + 70, 0, "", 20);
+			scoreTxt.setFormat(Paths.font("vcr.ttf"), 16, FlxColor.WHITE, RIGHT);
+			scoreTxt.scrollFactor.set();
+			add(scoreTxt);
+
+			iconP1.changeIcon('bf-old');
+			iconP2.changeIcon('dad');
 		}
 	}
 
@@ -1135,8 +1156,15 @@ class PlayState extends MusicBeatState
 	}
 
 	public function reloadHealthBarColors() {
-		healthBar.createFilledBar(FlxColor.fromRGB(dad.healthColorArray[0], dad.healthColorArray[1], dad.healthColorArray[2]),
-			FlxColor.fromRGB(boyfriend.healthColorArray[0], boyfriend.healthColorArray[1], boyfriend.healthColorArray[2]));
+		if(curSong == 'slices')
+		{
+			healthBar.createFilledBar(0xFFFF0000, 0xFF66FF33);
+		}
+		else
+		{
+			healthBar.createFilledBar(FlxColor.fromRGB(dad.healthColorArray[0], dad.healthColorArray[1], dad.healthColorArray[2]),
+				FlxColor.fromRGB(boyfriend.healthColorArray[0], boyfriend.healthColorArray[1], boyfriend.healthColorArray[2]));
+		}
 		healthBar.updateBar();
 	}
 
@@ -2057,6 +2085,8 @@ class PlayState extends MusicBeatState
 			case 'perfection':
 				scoreTxt.text = 'Score: PERFECT' + ' | Combo Breaks: ' + songMisses + ' / 0';
 				scoreTxt.text += ' | Accuracy: 100% [SFC]';
+			case 'slices':
+				scoreTxt.text = 'Score: ' + songScore;
 			default:
 				scoreTxt.text = 'Score: ' + songScore + ' | Combo Breaks: ' + songMisses;
 				scoreTxt.text += ' | Accuracy: ';
@@ -2418,7 +2448,10 @@ class PlayState extends MusicBeatState
 					if(daNote.isSustainNote && !daNote.animation.curAnim.name.endsWith('end')) {
 						time += 0.15;
 					}
-					StrumPlayAnim(true, Std.int(Math.abs(daNote.noteData)) % 4, time);
+					if(curSong != 'slices')
+					{
+						StrumPlayAnim(true, Std.int(Math.abs(daNote.noteData)) % 4, time);
+					}
 					daNote.hitByOpponent = true;
 
 					callOnLuas('opponentNoteHit', [notes.members.indexOf(daNote), Math.abs(daNote.noteData), daNote.noteType, daNote.isSustainNote]);

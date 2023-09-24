@@ -43,8 +43,6 @@ class FreeplayState extends MusicBeatState
 	private var iconArray:Array<HealthIcon> = [];
 
 	var bg:FlxSprite;
-	var bgList:Array<String>;
-	var currentBg:Int = 0;
 
 	var intendedColor:Int;
 	var colorTween:FlxTween;
@@ -93,11 +91,17 @@ class FreeplayState extends MusicBeatState
 
 		// LOAD CHARACTERS
 
-		bgList = ["freeplay/backgrounds/forest", "freeplay/backgrounds/forest", "freeplay/backgrounds/forest", "freeplay/backgrounds/hill"];
-
-		bg = new FlxSprite().loadGraphic(Paths.image('freeplay/backgrounds/forest'));
-		bg.antialiasing = ClientPrefs.globalAntialiasing;
-		add(bg);
+		bg = new FlxSprite();
+        bg.scrollFactor.set(0, 0);
+        bg.frames = Paths.getSparrowAtlas('freeplay/backgrounds/bg');
+        bg.antialiasing = ClientPrefs.globalAntialiasing;
+        bg.animation.addByIndices('forest',"bg", [0], "", 24, false);
+        bg.animation.addByIndices('hill',"bg", [1], "", 24, false);
+        bg.animation.play('forest');
+		bg.x = 0;
+		bg.y = 0;
+        bg.scale.set(1,1);
+        add(bg);
 
 		grpSongs = new FlxTypedGroup<Alphabet>();
 		add(grpSongs);
@@ -235,58 +239,18 @@ class FreeplayState extends MusicBeatState
 		if (upP)
 		{
 			changeSelection(-shiftMult);
-
-			currentBg--;
-            if (currentBg < 0)
-            {
-                currentBg = bgList.length - 1;
-            }
-            remove(bg);
-            bg = new FlxSprite().loadGraphic(Paths.image(bgList[currentBg]));
-			bg.antialiasing = ClientPrefs.globalAntialiasing;
-            add(bg);
 		}
 		if (downP)
 		{
 			changeSelection(shiftMult);
-
-			currentBg++;
-            if (currentBg >= bgList.length)
-            {
-                currentBg = 0;
-            }
-            remove(bg);
-            bg = new FlxSprite().loadGraphic(Paths.image(bgList[currentBg]));
-			bg.antialiasing = ClientPrefs.globalAntialiasing;
-            add(bg);
 		}
 		if (upScroll)
 		{
 			changeSelection(-shiftMult);
-	
-			currentBg--;
-			if (currentBg < 0)
-			{
-				currentBg = bgList.length - 1;
-			}
-			remove(bg);
-			bg = new FlxSprite().loadGraphic(Paths.image(bgList[currentBg]));
-			bg.antialiasing = ClientPrefs.globalAntialiasing;
-			add(bg);
 		}
 		if (downScroll)
 		{
 			changeSelection(shiftMult);
-
-			currentBg++;
-			if (currentBg >= bgList.length)
-			{
-				currentBg = 0;
-			}
-			remove(bg);
-			bg = new FlxSprite().loadGraphic(Paths.image(bgList[currentBg]));
-			bg.antialiasing = ClientPrefs.globalAntialiasing;
-			add(bg);
 		}
 
 		if (controls.UI_LEFT_P)
@@ -399,6 +363,14 @@ class FreeplayState extends MusicBeatState
 		if (curSelected >= songs.length)
 			curSelected = 0;
 
+		switch (Paths.formatToSongPath(songs[curSelected].songName))
+		{
+			case 'foraging' | 'torn-apart' |  'blood-thirsty':
+				bg.animation.play('forest');
+			case 'kill-streak':
+				bg.animation.play('hill');
+		}
+
 		var newColor:Int = songs[curSelected].color;
 		if(newColor != intendedColor) {
 			if(colorTween != null) {
@@ -444,6 +416,9 @@ class FreeplayState extends MusicBeatState
 		}
 		changeDiff();
 		Paths.currentModDirectory = songs[curSelected].folder;
+
+		PlayState.isExtrasMenu = false;
+		PlayState.isStoryMode = false;
 	}
 
 	private function positionHighscore() {

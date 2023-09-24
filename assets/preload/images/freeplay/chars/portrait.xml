@@ -1,0 +1,7 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TextureAtlas imagePath="portrait.png">
+	<!-- Created with Adobe Animate version 21.0.0.35450 -->
+	<!-- http://www.adobe.com/products/animate.html -->
+	<SubTexture name="char0000" x="0" y="0" width="411" height="849"/>
+	<SubTexture name="char0001" x="411" y="0" width="524" height="910"/>
+</TextureAtlas>

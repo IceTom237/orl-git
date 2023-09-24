@@ -22,7 +22,7 @@ using StringTools;
 
 class ExtrasState extends MusicBeatState
 {
-	public static var songs:Array<String> = ['animation error', 'lost control'];
+	public static var songs:Array<String> = ['animation error', 'lost control', 'slices'];
 	private var grpTexts:FlxTypedGroup<Alphabet>;
 
 	private var curSelected = 0;
@@ -91,6 +91,11 @@ class ExtrasState extends MusicBeatState
 					MusicBeatState.switchState(new AnimationErrorSubstate());
 				case 'lost control':
 					PlayState.SONG = Song.loadFromJson('lost-control', 'lost-control');
+					LoadingState.loadAndSwitchState(new PlayState());
+					FlxG.sound.music.volume = 0;
+					FreeplayState.destroyFreeplayVocals();
+				case 'slices':
+					PlayState.SONG = Song.loadFromJson('slices', 'slices');
 					LoadingState.loadAndSwitchState(new PlayState());
 					FlxG.sound.music.volume = 0;
 					FreeplayState.destroyFreeplayVocals();
@@ -282,8 +287,6 @@ class AnimationErrorSubstate extends MusicBeatState
 				// item.setGraphicSize(Std.int(item.width));
 			}
 		}
-
-		PlayState.isExtrasMenu = true;
 
 		super.update(elapsed);
 	}

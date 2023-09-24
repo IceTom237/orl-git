@@ -100,12 +100,23 @@
 			"indices": []
 		},
 		{
+			"loop": true,
+			"offsets": [
+				0,
+				121
+			],
+			"anim": "deathLoop",
+			"fps": 24,
+			"name": "dead loop",
+			"indices": []
+		},
+		{
 			"loop": false,
 			"offsets": [
 				7,
 				120
 			],
-			"anim": "ded",
+			"anim": "firstDeath",
 			"fps": 24,
 			"name": "ded",
 			"indices": []
@@ -116,21 +127,10 @@
 				1,
 				172
 			],
-			"anim": "death confirm",
+			"anim": "deathConfirm",
 			"fps": 24,
 			"name": "death confirm",
 			"indices": []
-		},
-		{
-			"offsets": [
-				0,
-				121
-			],
-			"indices": [],
-			"fps": 24,
-			"anim": "dead loop",
-			"loop": true,
-			"name": "dead loop"
 		}
 	],
 	"no_antialiasing": false,
