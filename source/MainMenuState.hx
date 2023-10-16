@@ -38,7 +38,7 @@ class MainMenuState extends MusicBeatState
 	var magenta:FlxSprite;
 	var camFollow:FlxObject;
 	var camFollowPos:FlxObject;
-	var shader:FlxSprite;
+	var staticSpr:FlxSprite;
 
 	override function create()
 	{
@@ -140,14 +140,14 @@ class MainMenuState extends MusicBeatState
 
 		super.create();
 
-		shader = new FlxSprite(0, 0).loadGraphic(Paths.image('shaders/static'));
-		shader.frames = Paths.getSparrowAtlas('shaders/static');
-		shader.animation.addByPrefix('idleIDFK', 'static idle', 24, true);
-		shader.animation.play('idleIDFK');
-		shader.scrollFactor.set();
-		shader.antialiasing = ClientPrefs.globalAntialiasing;
-		shader.visible = ClientPrefs.flashing;
-		add(shader);
+		staticSpr = new FlxSprite(0, 0).loadGraphic(Paths.image('effects/static'));
+		staticSpr.frames = Paths.getSparrowAtlas('effects/static');
+		staticSpr.animation.addByPrefix('idleIDFK', 'static idle', 24, true);
+		staticSpr.animation.play('idleIDFK');
+		staticSpr.scrollFactor.set();
+		staticSpr.antialiasing = ClientPrefs.globalAntialiasing;
+		staticSpr.visible = ClientPrefs.flashing;
+		add(staticSpr);
 	}
 
 	#if ACHIEVEMENTS_ALLOWED

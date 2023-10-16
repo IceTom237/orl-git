@@ -7,7 +7,7 @@ import flixel.text.FlxText;
 import flixel.util.FlxColor;
 import lime.app.Application;
 
-class WarningSubState extends MusicBeatState
+class WarningState extends MusicBeatState
 {
 	public static var leftState:Bool = false;
 
@@ -17,9 +17,9 @@ class WarningSubState extends MusicBeatState
 		var bg:FlxSprite = new FlxSprite().makeGraphic(FlxG.width, FlxG.height, FlxColor.BLACK);
 		add(bg);
 		var txt:FlxText = new FlxText(0, 0, FlxG.width,
-			"Hello Player,\nOur mod One Ring Left is a official mod directed by Tyler does stuff, Snowen and IceTom.\nIf you are making a fan mod on One Ring Left please read the following:
+			"Hello Player,\nOur mod One Ring Left is an official mod directed by Tommy K., Tyler does stuff, and MDRtheWolf.\nIf you are making a fan mod on One Ring Left please read the following:
 			\nPlease note that you MUST direct message the MAIN director of ORL.\nTo contact the main director, please contact him on discord
-			\ntyler3420\nYoutubers if your recording this video,\nHi YouTube :D\nIf you do not want to see this menu again disable the warning screen option in the options menu.",
+			\nformallyicetom\nYoutubers if your recording this video,\nHi YouTube :D\nIf you do not want to see this menu again disable the warning screen option in the options menu.\n(Press Enter To Leave This Menu.)",
 			32);
 		txt.setFormat("VCR OSD Mono", 32, FlxColor.WHITE, CENTER);
 		txt.screenCenter();

@@ -1,5 +1,6 @@
 package;
 
+import flixel.ui.FlxBar;
 #if desktop
 import Discord.DiscordClient;
 #end
@@ -20,15 +21,28 @@ import openfl.utils.Assets as OpenFlAssets;
 
 using StringTools;
 
+typedef SongData = {
+	var songName:String;
+	var songChar:String;
+}
 class ExtrasState extends MusicBeatState
 {
-	public static var songs:Array<String> = ['animation error', 'lost control', 'slices'];
+	public static var songs:Array<SongData> = [{
+		songName: 'animation error',
+		songChar: 'bobbie'
+	}, {
+		songName: 'lost control',
+		songChar: 'face'
+	}, {
+		songName: 'slices',
+		songChar: 'face'
+	}];
 	private var grpTexts:FlxTypedGroup<Alphabet>;
-
+	private var iconArray:Array<HealthIcon> = [];
 	private var curSelected = 0;
 
 	var char:FlxSprite;
-	var shader:FlxSprite;
+	var staticSpr:FlxSprite;
 
 	override function create()
 	{
@@ -44,24 +58,31 @@ class ExtrasState extends MusicBeatState
 		bg.scrollFactor.set();
 		add(bg);
 
-		shader = new FlxSprite(0, 0).loadGraphic(Paths.image('shaders/static'));
-		shader.frames = Paths.getSparrowAtlas('shaders/static');
-		shader.animation.addByPrefix('idleIDFK', 'static idle', 24, true);
-		shader.animation.play('idleIDFK');
-		shader.scrollFactor.set();
-		shader.antialiasing = ClientPrefs.globalAntialiasing;
-		shader.visible = ClientPrefs.flashing;
-		add(shader);
+		staticSpr = new FlxSprite(0, 0).loadGraphic(Paths.image('effects/static'));
+		staticSpr.frames = Paths.getSparrowAtlas('effects/static');
+		staticSpr.animation.addByPrefix('idleIDFK', 'static idle', 24, true);
+		staticSpr.animation.play('idleIDFK');
+		staticSpr.scrollFactor.set();
+		staticSpr.antialiasing = ClientPrefs.globalAntialiasing;
+		staticSpr.visible = ClientPrefs.flashing;
+		add(staticSpr);
 
 		grpTexts = new FlxTypedGroup<Alphabet>();
 		add(grpTexts);
 
 		for (i in 0...songs.length)
 		{
-			var leText:Alphabet = new Alphabet(0, (70 * i) + 30, songs[i], true, false);
+			var leText:Alphabet = new Alphabet(0, (70 * i) + 30, songs[i].songName, true, false);
 			leText.isMenuItem = true;
 			leText.targetY = i;
 			grpTexts.add(leText);
+
+			var icon:HealthIcon = new HealthIcon(songs[i].songChar);
+			icon.sprTracker = leText;
+
+			// using a FlxGroup is too much fuss!
+			iconArray.push(icon);
+			add(icon);
 		}
 		changeSelection();
 
@@ -86,9 +107,9 @@ class ExtrasState extends MusicBeatState
 
 		if (controls.ACCEPT)
 		{
-			switch(songs[curSelected]) {
+			switch(songs[curSelected].songName) {
 				case 'animation error':
-					MusicBeatState.switchState(new AnimationErrorSubstate());
+					MusicBeatState.switchState(new AnimationErrorState());
 				case 'lost control':
 					PlayState.SONG = Song.loadFromJson('lost-control', 'lost-control');
 					LoadingState.loadAndSwitchState(new PlayState());
@@ -136,14 +157,16 @@ class ExtrasState extends MusicBeatState
 	}
 }
 
-class AnimationErrorSubstate extends MusicBeatState
+class AnimationErrorState extends MusicBeatState
 {
 	public static var options:Array<String> = ['easy', 'normal', 'hard', 'expert'];
 	private var grpTexts:FlxTypedGroup<Alphabet>;
 
     var level:Array<String>;
     var currentLevel:Int = 0;
-    var threatLevel:FlxSprite;
+    var threatLevel:FlxText;
+	var threatBar:FlxBar;
+	var threatBarProg = 0;
 
     var iconList:Array<String>;
     var currentIcon:Int = 0;
@@ -151,7 +174,7 @@ class AnimationErrorSubstate extends MusicBeatState
 
 	private var curSelected = 0;
 
-	var shader:FlxSprite;
+	var staticSpr:FlxSprite;
 
 	override function create()
 	{
@@ -164,23 +187,30 @@ class AnimationErrorSubstate extends MusicBeatState
 		#end
 
 		iconList = ["extras/animation-error/icon-easy", "extras/animation-error/icon-normal", "extras/animation-error/icon-hard", "extras/animation-error/icon-expert"];
-		level = ["extras/animation-error/threat-easy", "extras/animation-error/threat-normal", "extras/animation-error/threat-hard", "extras/animation-error/threat-expert"];
 
         icon = new FlxSprite().loadGraphic(Paths.image("extras/animation-error/icon-easy"));
 		icon.screenCenter();
         add(icon);
 
-        threatLevel = new FlxSprite(0, 550).loadGraphic(Paths.image("extras/animation-error/threat-easy"));
+        threatLevel = new FlxText(45, 600, 902, 'Threat Level:', 40);
+		threatLevel.setFormat('assets/fonts/schluber.ttf', 80, FlxColor.BLACK, LEFT);
         add(threatLevel);
 
-		shader = new FlxSprite(0, 0).loadGraphic(Paths.image('shaders/static'));
-		shader.frames = Paths.getSparrowAtlas('shaders/static');
-		shader.animation.addByPrefix('idleIDFK', 'static idle', 24, true);
-		shader.animation.play('idleIDFK');
-		shader.scrollFactor.set();
-		shader.antialiasing = ClientPrefs.globalAntialiasing;
-		shader.visible = ClientPrefs.flashing;
-		add(shader);
+		threatBar = new FlxBar((threatLevel.width/2)+45 , 600, LEFT_TO_RIGHT, 805, 75, this, 'threatBarProg', 0, 100, false); // = threatBar.createColoredEmptyBar(FlxColor.TRANSPARENT, false, FlxColor.WHITE);
+		threatBar.createFilledBar(FlxColor.TRANSPARENT, FlxColor.WHITE, false, FlxColor.WHITE);
+		threatBar.numDivisions = 1000;
+		//threatBar.color = FlxColor.BLACK;
+		add(threatBar);
+
+
+		staticSpr = new FlxSprite(0, 0).loadGraphic(Paths.image('effects/static'));
+		staticSpr.frames = Paths.getSparrowAtlas('effects/static');
+		staticSpr.animation.addByPrefix('idleIDFK', 'static idle', 24, true);
+		staticSpr.animation.play('idleIDFK');
+		staticSpr.scrollFactor.set();
+		staticSpr.antialiasing = ClientPrefs.globalAntialiasing;
+		staticSpr.visible = ClientPrefs.flashing;
+		add(staticSpr);
 
 		grpTexts = new FlxTypedGroup<Alphabet>();
 		add(grpTexts);
@@ -217,11 +247,8 @@ class AnimationErrorSubstate extends MusicBeatState
 			currentLevel--;
             if (currentLevel < 0)
             {
-                currentLevel = level.length - 1;
+                currentLevel = options.length - 1;
             }
-            remove(threatLevel);
-            threatLevel = new FlxSprite(0, 550).loadGraphic(Paths.image(level[currentLevel]));
-            add(threatLevel);
 		}
 		if (controls.UI_RIGHT_P)
 		{
@@ -238,13 +265,10 @@ class AnimationErrorSubstate extends MusicBeatState
             add(icon);
 
 			currentLevel++;
-            if (currentLevel >= level.length)
+            if (currentLevel >= options.length)
             {
                 currentLevel = 0;
             }
-            remove(threatLevel);
-            threatLevel = new FlxSprite(0, 550).loadGraphic(Paths.image(level[currentLevel]));
-            add(threatLevel);
 		}
 
 		if (controls.BACK)
@@ -286,6 +310,27 @@ class AnimationErrorSubstate extends MusicBeatState
 				item.alpha = 1;
 				// item.setGraphicSize(Std.int(item.width));
 			}
+		}
+
+		if (options[curSelected] == 'easy'){
+			threatBarProg = Std.int(FlxMath.lerp(threatBarProg, 20, 0.1));
+			threatBar.color = FlxColor.interpolate(threatBar.color, 0xFFFFFFFF, 0.1);
+			threatLevel.color = FlxColor.interpolate(threatLevel.color, 0xFFFFFFFF, 0.1);
+		}
+		if (options[curSelected] == 'normal'){
+			threatBarProg = Std.int(FlxMath.lerp(threatBarProg, 45, 0.1));
+			threatBar.color = FlxColor.interpolate(threatBar.color, 0xFFFFFFFF, 0.1);
+			threatLevel.color = FlxColor.interpolate(threatLevel.color, 0xFFFFFFFF, 0.1);
+		}
+		if (options[curSelected] == 'hard'){
+			threatBarProg = Std.int(FlxMath.lerp(threatBarProg, 70, 0.1));
+			threatBar.color = FlxColor.interpolate(threatBar.color, 0xFFFFFFFF, 0.1);
+			threatLevel.color = FlxColor.interpolate(threatLevel.color, 0xFFFFFFFF, 0.1);
+		}
+		if (options[curSelected] == 'expert'){
+			threatBarProg = Std.int(FlxMath.lerp(threatBarProg, 100, 0.1));
+			threatBar.color = FlxColor.interpolate(threatBar.color, 0xFFB83CDD, 0.1);
+			threatLevel.color = FlxColor.interpolate(threatLevel.color, 0xFFFF0000, 0.1);
 		}
 
 		super.update(elapsed);
