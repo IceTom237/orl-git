@@ -218,6 +218,7 @@ class PlayState extends MusicBeatState
 	public var songScore:Int = 0;
 	public var songHits:Int = 0;
 	public var songMisses:Int = 0;
+	public var songComboBreaks:Int = 0;
 	public var ghostMisses:Int = 0;
 	public var scoreTxt:FlxText;
 	var timeTxt:FlxText;
@@ -2083,12 +2084,12 @@ class PlayState extends MusicBeatState
 				if (songMisses <= 0)
 					scoreTxt.text += ratingString;
 			case 'perfection':
-				scoreTxt.text = 'Score: PERFECT' + ' | Combo Breaks: ' + songMisses + ' / 0';
+				scoreTxt.text = 'Score: PERFECT' + ' | Combo Breaks: ' + songComboBreaks + ' / 0' + ' | Misses: $songMisses';
 				scoreTxt.text += ' | Accuracy: 100% [SFC]';
 			case 'slices':
 				scoreTxt.text = 'Score: ' + songScore;
 			default:
-				scoreTxt.text = 'Score: ' + songScore + ' | Combo Breaks: ' + songMisses;
+				scoreTxt.text = 'Score: ' + songScore + ' | Combo Breaks: ' + songComboBreaks + ' | Misses: $songMisses';
 				scoreTxt.text += ' | Accuracy: ';
 				if (ratingString != 'N/A')
 					scoreTxt.text += '' + ((Math.floor(ratingPercent * 10000) / 100)) + '%';
@@ -2223,6 +2224,7 @@ class PlayState extends MusicBeatState
 
 					var songCalc:Float = (songLength - curTime);
 					songCalc = curTime;
+					var fullTime = FlxStringUtil.formatTime(songLength/1000);//OMG THIS EXISTS????
 
 					var secondsTotal:Int = Math.floor(songCalc / 1000);
 					if(secondsTotal < 0) secondsTotal = 0;
@@ -2230,31 +2232,7 @@ class PlayState extends MusicBeatState
 					var minutesRemaining:Int = Math.floor(secondsTotal / 60);
 					var secondsRemaining:String = '' + secondsTotal % 60;
 					if(secondsRemaining.length < 2) secondsRemaining = '0' + secondsRemaining; //Dunno how to make it display a zero first in Haxe lol
-
-					if(curSong == 'foraging')
-					{
-						timeTxt.text = minutesRemaining + ':' + secondsRemaining + ' / ' + '2:46';
-					}
-					else if(curSong == 'torn apart')
-					{
-						timeTxt.text = minutesRemaining + ':' + secondsRemaining + ' / ' + '3:49';
-					}
-					else if(curSong == 'kill streak')
-					{
-						timeTxt.text = minutesRemaining + ':' + secondsRemaining + ' / ' + '1:59';
-					}
-					else if(curSong == 'perfection')
-					{
-						timeTxt.text = minutesRemaining + ':' + secondsRemaining + ' / ' + '2:09';
-					}
-					else if(curSong == 'unwanted pirate')
-					{
-						timeTxt.text = minutesRemaining + ':' + secondsRemaining + ' / ' + '3:47';
-					}
-					else
-					{
-						timeTxt.text = minutesRemaining + ':' + secondsRemaining;
-					}
+					timeTxt.text = '$minutesRemaining:$secondsRemaining / $fullTime';
 				}
 			}
 
@@ -3609,6 +3587,10 @@ class PlayState extends MusicBeatState
 				note.destroy();
 			}
 		});
+
+		if (combo > 0){
+			songComboBreaks++;
+		}
 
 		if(!daNote.isSustainNote){
 			health -= daNote.missHealth; //For testing purposes
